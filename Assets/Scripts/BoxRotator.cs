@@ -1,11 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class BoxRotator : MonoBehaviour
 {
+
+	public bool blockTrigger = false;
+
+	private Vector3 oldPosition;
+	private Quaternion oldRotation;
+
 	public float rotationPeriod = 0.3f;     
 	Vector3 scale;                          
+
 
 	bool isRotate = false;                  
 	float directionX = 0;                   
@@ -48,17 +56,21 @@ public class BoxRotator : MonoBehaviour
 		{
 			directionX = y;                                                        
 			directionZ = x;                                                        
-			startPos = transform.position;                                         
+			startPos = transform.position;
+			oldPosition = startPos; //old position
+			oldRotation = transform.rotation; //old rotation
 			fromRotation = transform.rotation;                                     
 			transform.Rotate(directionZ * 90, 0, -directionX * 90, Space.World);    
 			toRotation = transform.rotation;                                       
 			transform.rotation = fromRotation;                                     
-			setRadius();                                                           
+			setRadius();
+			
+			print(blockTrigger);
 			rotationTime = 0;                                                      
 			isRotate = true;                                                       
 		}
 	}
-
+	
 	void FixedUpdate()
 	{
 
@@ -86,6 +98,13 @@ public class BoxRotator : MonoBehaviour
 				directionZ = 0;
 				rotationTime = 0;
 			}
+
+			if (blockTrigger)
+			{
+				transform.position = oldPosition;
+				transform.rotation = oldRotation;
+			}
+
 		}
 	}
 
